@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUp } from "lucide-react";
 import { localePath, type Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/types";
-import { AUTHOR, BRAND_NAME, SECTION_IDS } from "@/lib/constants";
+import { BRAND_NAME, MAKER, SECTION_IDS } from "@/lib/constants";
 import { NAV_KEYS, navHref, sectionHref } from "@/lib/navigation";
 import { Container } from "@/components/ui/container";
 import { Logo } from "@/components/ui/logo";
@@ -57,12 +57,12 @@ export function Footer({ locale, t }: FooterProps) {
         <p>
           {t.footer.credit}{" "}
           <a
-            href={AUTHOR.url}
+            href={MAKER.url}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex min-h-11 items-center font-semibold text-fg underline decoration-line underline-offset-4 transition-colors duration-300 hover:text-signal hover:decoration-[var(--tone-accent)]"
           >
-            {AUTHOR.handle}
+            {MAKER.name}
           </a>
         </p>
       </Container>

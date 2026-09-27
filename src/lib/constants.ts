@@ -5,6 +5,11 @@ export const AUTHOR = {
   url: "https://t.me/wonkymp3",
 } as const;
 
+export const MAKER = {
+  name: "swayprod.",
+  url: "https://swayprod.surge.sh",
+} as const;
+
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export const EASE = [0.22, 1, 0.36, 1] as const;
