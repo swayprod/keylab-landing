@@ -1,0 +1,65 @@
+name: studio
+
+services:
+  front:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SITE_URL: https://${DOMAIN:-example.com}
+    image: studio-front:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000/robots.txt"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.front.rule=Host(`${DOMAIN:-example.com}`)
+      - traefik.http.routers.front.entrypoints=websecure
+      - traefik.http.routers.front.tls.certresolver=letsencrypt
+      - traefik.http.routers.front.service=front
+      - traefik.http.routers.front-www.rule=Host(`www.${DOMAIN:-example.com}`)
+      - traefik.http.routers.front-www.entrypoints=websecure
+      - traefik.http.routers.front-www.tls.certresolver=letsencrypt
+      - traefik.http.routers.front-www.middlewares=www-to-apex
+      - traefik.http.routers.front-www.service=front
+      - traefik.http.middlewares.www-to-apex.redirectregex.regex=^https://www\.(.*)
+      - traefik.http.middlewares.www-to-apex.redirectregex.replacement=https://$${1}
+      - traefik.http.middlewares.www-to-apex.redirectregex.permanent=true
+      - traefik.http.services.front.loadbalancer.server.port=3000
+    networks:
+      - web
+
+  traefik:
+    image: traefik:v3.6
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ${TRAEFIK_CONFIG:-./traefik.yml}:/etc/traefik/traefik.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      front:
+        condition: service_healthy
+    networks:
+      - web
+
+networks:
+  web:
+    name: studio-web
+    external: true
+
+volumes:
+  letsencrypt:

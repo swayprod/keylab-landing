@@ -1,0 +1,16 @@
+.git
+.gitignore
+.next
+node_modules
+npm-debug.log*
+.env*
+.claude
+.DS_Store
+Dockerfile
+docker-compose.yml
+.dockerignore
+traefik.yml
+README.md
+AGENTS.md
+CLAUDE.md
+*.tsbuildinfo
